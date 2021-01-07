@@ -40,7 +40,14 @@ class ProductController extends Controller
             'name' => 'required',
             'description' => 'required',
         ]);
-  
+        if ($request->hasFile('input_img')) {
+            $image = $request->file('input_img');
+            $name = time().'.'.$image->getClientOriginalExtension();
+            $destinationPath = public_path('/images');
+            $image->move($destinationPath, $name);
+            $request['image'] = $name;
+            unset($request['input_img']);
+        }
         Product::create($request->all());
    
         return redirect()->route('products.index')
